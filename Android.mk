@@ -42,6 +42,11 @@ libudev_common_c_includes := \
 libudev_common_c_flags := \
  -Wno-missing-field-initializers \
  -Wno-unknown-attributes \
+ -Wno-unused-but-set-variable \
+ -Wno-unused-parameter \
+ -Wno-unused-variable \
+ -Wno-unused-label \
+ -Wno-constant-conversion \
  -std=gnu99 \
  -include $(LOCAL_PATH)/android/udev.h
 

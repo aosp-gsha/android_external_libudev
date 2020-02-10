@@ -40,8 +40,9 @@
 static int files_add(Hashmap *h, const char *root, const char *path, const char *suffix) {
         _cleanup_closedir_ DIR *dir = NULL;
         _cleanup_free_ char *dirpath = NULL;
-
-        if (asprintf(&dirpath, "%s%s", root ? root : "", path) < 0)
+	struct dirent *de;
+        
+	if (asprintf(&dirpath, "%s%s", root ? root : "", path) < 0)
                 return -ENOMEM;
 
         dir = opendir(dirpath);
@@ -51,7 +52,28 @@ static int files_add(Hashmap *h, const char *root, const char *path, const char 
                 return -errno;
         }
 
-        for (;;) {
+	while((de = readdir(dir)) != NULL) {
+                char *p;
+		int r;
+
+                p = strjoin(dirpath, "/", de->d_name, NULL);
+                if (!p)
+                        return -ENOMEM;
+                
+		r = hashmap_put(h, path_get_file_name(p), p);
+                if (r == -EEXIST) {
+                        log_debug("Skipping overridden file: %s.", p);
+                        free(p);
+                } else if (r < 0) {
+                        free(p);
+                        return r;
+                } else if (r == 0) {
+                        log_debug("Duplicate file %s", p);
+                        free(p);
+                }
+    	} 
+#if 0
+	for (;;) {
                 struct dirent *de;
                 union dirent_storage buf;
                 char *p;
@@ -84,6 +106,7 @@ static int files_add(Hashmap *h, const char *root, const char *path, const char 
                 }
         }
 
+#endif
         return 0;
 }
 

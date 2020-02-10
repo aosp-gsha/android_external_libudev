@@ -60,6 +60,7 @@
 #include <langinfo.h>
 #include <locale.h>
 #include <libgen.h>
+#include <sys/sysmacros.h>
 
 #include "macro.h"
 #include "util.h"
@@ -2420,7 +2421,7 @@ int dir_is_empty(const char *path) {
         d = opendir(path);
         if (!d)
                 return -errno;
-
+#if 0
         for (;;) {
                 struct dirent *de;
                 union dirent_storage buf;
@@ -2435,6 +2436,8 @@ int dir_is_empty(const char *path) {
                 if (!ignore_file(de->d_name))
                         return 0;
         }
+#endif
+	return 0;
 }
 
 char* dirname_malloc(const char *path) {
@@ -2749,7 +2752,7 @@ int rm_rf_children_dangerous(int fd, bool only_dirs, bool honour_sticky, struct 
 
                 return errno == ENOENT ? 0 : -errno;
         }
-
+#if 0
         for (;;) {
                 struct dirent *de;
                 union dirent_storage buf;
@@ -2821,7 +2824,7 @@ int rm_rf_children_dangerous(int fd, bool only_dirs, bool honour_sticky, struct 
                         }
                 }
         }
-
+#endif
         closedir(d);
 
         return ret;
@@ -3740,7 +3743,6 @@ void execute_directory(const char *directory, DIR *d, char *argv[]) {
                 log_error("Failed to allocate set.");
                 goto finish;
         }
-
         while ((de = readdir(d))) {
                 char *path;
                 pid_t pid;
@@ -3811,7 +3813,6 @@ void execute_directory(const char *directory, DIR *d, char *argv[]) {
                         free(path);
                 }
         }
-
 finish:
         if (_d)
                 closedir(_d);
@@ -4505,7 +4506,7 @@ int get_files_in_directory(const char *path, char ***list) {
         d = opendir(path);
         if (!d)
                 return -errno;
-
+#if 0
         for (;;) {
                 struct dirent *de;
                 union dirent_storage buf;
@@ -4551,7 +4552,7 @@ int get_files_in_directory(const char *path, char ***list) {
                 } else
                         r++;
         }
-
+#endif
 finish:
         if (d)
                 closedir(d);
@@ -5605,7 +5606,7 @@ int on_ac_power(void) {
         d = opendir("/sys/class/power_supply");
         if (!d)
                 return -errno;
-
+#if 0
         for (;;) {
                 struct dirent *de;
                 union dirent_storage buf;
@@ -5671,7 +5672,7 @@ int on_ac_power(void) {
                 else
                         return -EIO;
         }
-
+#endif
         return found_online || !found_offline;
 }
 

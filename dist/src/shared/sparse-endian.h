@@ -24,12 +24,14 @@
 #include <endian.h>
 #include <stdint.h>
 
+#if 0
 #ifdef __CHECKER__
 #define __bitwise __attribute__((bitwise))
 #define __force __attribute__((force))
 #else
 #define __bitwise
 #define __force
+#endif
 #endif
 
 typedef uint16_t __bitwise le16_t;
